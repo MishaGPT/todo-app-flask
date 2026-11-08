@@ -1,0 +1,29 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/169178332220/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: github-deployer@lab6zubel.iam.gserviceaccount.com
+
+      - uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: todo-app
+          region: europe-west4
+          source: .
+          env_vars: GOOGLE_CLOUD_PROJECT=lab6zubel
+          flags: --allow-unauthenticated
