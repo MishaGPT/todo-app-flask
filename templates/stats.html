@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Статистика</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 15px; background: #f4f6f8; }
+        h1 { text-align: center; }
+        .nav { text-align: center; margin-bottom: 20px; }
+        .nav a { color: #3b82f6; text-decoration: none; font-weight: bold; }
+        .card { background: #fff; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        th { background: #f3f4f6; }
+        .chart { max-width: 360px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <h1>Статистика завдань за категоріями</h1>
+    <div class="nav"><a href="/">До списку справ</a></div>
+
+    <div class="card">
+        <p>Усього завдань: <b>{{ all_count }}</b></p>
+        <table>
+            <tr><th>Категорія</th><th>Усього</th><th>Виконано</th><th>Виконання, %</th></tr>
+            {% for r in rows %}
+            <tr><td>{{ r.category }}</td><td>{{ r.total }}</td><td>{{ r.done }}</td><td>{{ r.percent }}%</td></tr>
+            {% else %}
+            <tr><td colspan="4">Даних поки немає</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="chart"><canvas id="chart"></canvas></div>
+    </div>
+
+    <script>
+        new Chart(document.getElementById('chart'), {
+            type: 'doughnut',
+            data: {
+                labels: {{ labels | tojson }},
+                datasets: [{ data: {{ values | tojson }},
+                    backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'] }]
+            },
+            options: { plugins: { title: { display: true, text: 'Розподіл завдань за категоріями' } } }
+        });
+    </script>
+</body>
+</html>

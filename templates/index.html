@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Список справ</title>
+    <title>Список справ з ШІ</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 15px; background: #f4f6f8; }
-        h1 { text-align: center; }
+        body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 15px; background: #f4f6f8; }
+        h1 { text-align: center; margin-bottom: 4px; }
+        .sub { text-align: center; color: #666; margin-bottom: 20px; }
+        .nav { text-align: center; margin-bottom: 20px; }
+        .nav a { color: #3b82f6; text-decoration: none; font-weight: bold; }
         form.add { display: flex; gap: 8px; margin-bottom: 25px; }
         input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; flex: 1; }
         button { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; color: #fff; background: #3b82f6; }
@@ -14,12 +17,15 @@
         button.ok { background: #22c55e; }
         .task { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px; margin-bottom: 8px; border-radius: 8px; }
         .done .text { text-decoration: line-through; color: #888; }
-        .user { font-size: 12px; color: #666; }
+        .user { font-size: 12px; color: #666; margin-top: 4px; }
+        .badge { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 10px; background: #e0e7ff; color: #3730a3; margin-left: 8px; }
         .actions { display: flex; gap: 6px; }
     </style>
 </head>
 <body>
-    <h1>📝 Список справ</h1>
+    <h1>Список справ з ШІ</h1>
+    <div class="sub">Категорія завдання визначається автоматично моделлю ШІ</div>
+    <div class="nav"><a href="/stats">Статистика за категоріями</a></div>
 
     <form class="add" action="/add" method="post">
         <input type="text" name="user_name" placeholder="Ваше ім'я" required>
@@ -30,8 +36,11 @@
     {% for t in tasks %}
     <div class="task {{ 'done' if t.done }}">
         <div>
-            <div class="text">{{ t.title }}</div>
-            <div class="user">👤 {{ t.user_name }} · {{ t.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+            <div>
+                <span class="text">{{ t.title }}</span>
+                <span class="badge">{{ t.category or 'Без категорії' }}{% if t.confidence %} · {{ t.confidence }}%{% endif %}</span>
+            </div>
+            <div class="user">{{ t.user_name }} · {{ t.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
         </div>
         <div class="actions">
             {% if not t.done %}
